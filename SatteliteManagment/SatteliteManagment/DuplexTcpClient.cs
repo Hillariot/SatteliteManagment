@@ -27,10 +27,9 @@ namespace SatteliteManagment
             _ = ReceiveLoop(_cts.Token);
         }
 
-        public async Task SendTextAsync(string text, CancellationToken token = default)
+        public async Task SendTextAsync(byte[] bytes, CancellationToken token = default)
         {
-            byte[] data = Encoding.ASCII.GetBytes(text);
-            await PacketProtocol.WritePacketAsync(_stream, data, token);
+            await PacketProtocol.WritePacketAsync(_stream, bytes, token);
         }
 
         private async Task ReceiveLoop(CancellationToken token)

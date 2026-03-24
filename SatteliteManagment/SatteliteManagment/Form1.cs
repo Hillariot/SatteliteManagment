@@ -36,11 +36,13 @@ namespace SatteliteManagment
             {
                 pictureBox1.BackColor = Color.Green;
                 buttonOpenCloseServer.Text = "Выключить сервер";
+                labelComPortConnectionInfo.Text = "Подключено";
             }
             else
             {
                 pictureBox1.BackColor = Color.Red;
                 buttonOpenCloseServer.Text = "Включить сервер";
+                labelComPortConnectionInfo.Text = "Выключено";
             }
         }
 
@@ -155,7 +157,7 @@ namespace SatteliteManagment
                 changeServerState(false);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             openFileDialog1.ShowDialog();
             if (openFileDialog1.FileName == "" || Path.GetExtension(openFileDialog1.FileName).ToLower() != ".txt")
@@ -173,9 +175,18 @@ namespace SatteliteManagment
                 Array.Copy(dataArray, subArray, subArrayLength);
                 data.Add(subArray);
             }
-            int i = 0;
 
+            if (buttonOpenCloseServer.Text == "Включить сервер" || labelComPortConnectionInfo.Text == "Выключено")
+                connectToServer_Click(sender,e);
 
+            byte[] baseSendString = Encoding.ASCII.GetBytes("Идёт отправка команд из файла");
+
+            _client.SendTextAsync(baseSendString);
+
+            foreach (var i in data)
+            {
+                _client.SendTextAsync(i);
+            }
         }
     }
 }
